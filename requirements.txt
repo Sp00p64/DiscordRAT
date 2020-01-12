@@ -6,3 +6,4 @@ pygame
 mss
 browserhistory
 pyautogui
+tkinter
