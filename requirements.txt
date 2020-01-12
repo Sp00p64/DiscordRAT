@@ -1,0 +1,8 @@
+discord
+PyInstaller
+numpy
+opencv-python
+pygame
+mss
+browserhistory
+pyautogui
