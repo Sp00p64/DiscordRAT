@@ -15,5 +15,5 @@ Python3,Windows
 **Compiling to exe (optional):**\
 If you want to compile the bot to exe you can use PyInstaller.\
 Inside the directory of the bot execute "PyInstaller --onefile --noconsole DiscordRAT.py" or "python3 -m PyInstaller --onefile --noconsole DiscordRAT.py"\
-If compiling failed try to import the discord module "PyInstaller --onefile --noconsole --hidden-import=discord DiscordRAT.py"
+If an error occured during compiling try to import the discord module "PyInstaller --onefile --noconsole --hidden-import=discord DiscordRAT.py"
 
