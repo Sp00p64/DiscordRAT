@@ -63,8 +63,6 @@ Availaible commands are :
 
 --> !volumemax = Put volume at 100%
 
---> !music = Play your desired music / Syntax = "!music C:/Users/UserExemple/music.mp3"
-
 --> !rdp = Activates RDP on target's computer and port forwards 3389 with ngrok (needs admin)
 
 --> !stoprdp = Deactivates RDP on target's computer
