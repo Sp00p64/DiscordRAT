@@ -23,5 +23,5 @@ Inside the directory of the bot execute "PyInstaller --onefile --noconsole Disco
 If an error occured during compiling try to import the discord module "PyInstaller --onefile --noconsole --hidden-import=discord DiscordRAT.py"
 
 **Advice:**\
-If you have problems with win32api or/and modules related , try installing it in a python virtual environment.\
+If you have problems with the installation of win32api or other modules , try installing it in a python virtual environment.\
 There are two python files one has opencv and webcam related modules the other does not, this has been done because open-cv adds multiple dozens of megabytes to the compiled .exe file.
