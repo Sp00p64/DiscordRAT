@@ -1,9 +1,10 @@
 discord
 PyInstaller
 numpy
-https://files.pythonhosted.org/packages/74/41/b01f308ca4a22c8c368ed4ee80ef5318efe2f221cd0024a3a0ee9df6a94d/opencv_python-4.1.2.30-cp37-cp37m-win_amd64.whl
 pygame
 mss
 browserhistory
 pyautogui
 tkinter
+pyngrok
+pynput
