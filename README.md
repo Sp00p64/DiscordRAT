@@ -14,6 +14,7 @@ You will first need to register a bot with the Discord developper portal and the
 Once the bot is created copy the token of your bot and paste it at line 11.\
 Now on go on discord , go to the settings , go to appearance , scroll to the bottom , and activate "Developer Mode",now go to the server where your bot added right click on the channel where you want the bot to post , click copy ID and finally , paste the ID in the parenthesis in line 99.\
 Install requirements ("pip3 install -r requirements.txt")\
+Then if steps above were succesful after launching the python file, or executable , it will post a message on the server with a generated uuid , all that is left to do is posting "!interact " with the given uuid.\
 Now your bot should be available to use ! 
 
 **Requirements:**\
