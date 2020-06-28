@@ -50,7 +50,7 @@ Availaible commands are :
 
 --> !geolocate = Approximately geolocate using latitude and longitude of the ip adress with google map
 
---> !startkeylogger = Starts a powershell keylogger
+--> !startkeylogger = Starts a keylogger
 
 --> !stopkeylogger = Stops keylogger
 
