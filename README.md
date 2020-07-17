@@ -28,4 +28,4 @@ If an error occured during compiling try to import the discord module "PyInstall
 **Advice:**\
 If you have problems with the installation of win32api or other modules , try installing it in a python virtual environment.\
 There are two python files one has opencv and webcam related modules the other does not, this has been done because open-cv adds multiple dozens of megabytes to the compiled .exe file.
-If you have an error saying '"chosen" is not defined' it's should not be a problem and the program should still work
+If you have an error saying '"chosen" is not defined' it should not be a problem and the program should still work
