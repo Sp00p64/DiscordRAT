@@ -18,6 +18,10 @@ global appdata
 appdata = os.getenv('APPDATA')
 client = discord.Client()
 bot = commands.Bot(command_prefix='!')
+
+chosen = None
+uuidgen = None
+
 helpmenu = """
 
 Availaible commands are :
