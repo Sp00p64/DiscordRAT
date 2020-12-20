@@ -32,7 +32,7 @@ PyInstaller --onefile --noconsole DiscordRAT.py
 ```
 Or 
 ```
-python3 -m PyInstaller --onefile --noconsole DiscordRAT(NoCV).py (or DiscordRAT.py)
+python3 -m PyInstaller --onefile --noconsole "DiscordRAT(NoCV).py" (or DiscordRAT.py)
 ```
 If an error occured during compiling try to import the discord module 
 ```
