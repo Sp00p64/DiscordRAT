@@ -11,7 +11,7 @@ This is my first project on github as such it is far from perfect,I will listen 
 
 ## **Setup Guide:**
 You will first need to register a bot with the Discord developper portal and then add the bot to the server that you want (make sure bot as administrator privileges).
-Once the bot is created copy the token of your bot and paste it at line 18.\
+Once the bot is created copy the token of your bot and paste it at line 18.
 
 Install requirements :
 ```
