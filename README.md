@@ -37,7 +37,7 @@ If an error occured during compiling try to import the discord module
 ```
 PyInstaller --onefile --noconsole --hidden-import=discord DiscordRAT.py
 ```
-##**Advice:**\
+## **Advice:**\
 If you have problems with the installation of win32api or other modules , try installing it in a python virtual environment.\
 Please avoid opening issues about module related errors as it is related to your python install and not a problem inherent of DiscordRAT.\
 If you encounter "AttributeError: module 'enum' has no attribute 'IntFlag'" while compiling to Pyinstaller please do :
