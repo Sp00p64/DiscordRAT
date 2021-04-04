@@ -10,19 +10,18 @@ This is my first project on github as such it is far from perfect,I will listen 
 
 
 ## **Setup Guide:**
-You will first need to register a bot with the Discord developper portal and then add the bot to the server that you want.
-Once the bot is created copy the token of your bot and paste it at line 18 if you use the WithCV or line 17 if you choose the WithoutCV .\
-Now on go on discord , go to the settings , go to appearance , scroll to the bottom , and activate "Developer Mode",now go to the server where your bot added right click on the channel where you want the bot to post , click copy ID and finally , paste the channel  ID (not server ID) in the parenthesis in line 102 if you use the NoCV or line 77 if you use the WithCV.
+You will first need to register a bot with the Discord developper portal and then add the bot to the server that you want (make sure bot as administrator privileges).
+Once the bot is created copy the token of your bot and paste it at line 18.\
 
 Install requirements :
 ```
 pip3 install -r requirements.txt
 ```
-Then if steps above were succesful after launching the python file, or executable , it will post a message on the server with a generated uuid , all that is left to do is posting "!interact " with the given uuid.\
+Then if steps above were succesful after launching the python file, or executable , it will create a new channel and post a message on the server with a generated uuid.\
 Now your bot should be available to use ! 
 
 **Requirements:**\
-Python3,Windows
+Python3,Windows(x64)
 
 **Compiling to exe (optional):**\
 If you want to compile the bot to exe you can use PyInstaller.\
@@ -32,7 +31,7 @@ PyInstaller --onefile --noconsole DiscordRAT.py
 ```
 Or 
 ```
-python3 -m PyInstaller --onefile --noconsole "DiscordRAT(NoCV).py" (or DiscordRAT.py)
+python3 -m PyInstaller --onefile --noconsole "DiscordRAT.py"
 ```
 If an error occured during compiling try to import the discord module 
 ```
@@ -40,5 +39,8 @@ PyInstaller --onefile --noconsole --hidden-import=discord DiscordRAT.py
 ```
 **Advice:**\
 If you have problems with the installation of win32api or other modules , try installing it in a python virtual environment.\
-There are two python files one has opencv and webcam related modules the other does not, this has been done because open-cv adds multiple dozens of megabytes to the compiled .exe file.
-If you have an error saying '"chosen" is not defined' it should not be a problem and the program should still work
+Please avoid opening issues about module related errors as it is related to your python install and not a problem inherent of DiscordRAT.\
+If you encounter "AttributeError: module 'enum' has no attribute 'IntFlag'" while compiling to Pyinstaller please do :
+```
+pip uninstall enum34
+```
