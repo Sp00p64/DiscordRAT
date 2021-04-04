@@ -1,10 +1,10 @@
 discord
-PyInstaller
-numpy
-pygame
 mss
 browserhistory
 pyautogui
-tkinter
-pyngrok
 pynput
+pycaw
+win32gui
+win32con
+win32net
+zipfile
