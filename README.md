@@ -30,7 +30,7 @@ Inside the directory of the bot execute
 PyInstaller --onefile --noconsole DiscordRAT.py
 ```
 Or 
-```
+``` 
 python3 -m PyInstaller --onefile --noconsole "DiscordRAT.py"
 ```
 If an error occured during compiling try to import the discord module 
