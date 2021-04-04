@@ -1,4 +1,4 @@
-# DiscordRAT
+# DiscordRAT V2
 Discord Remote Administration Tool fully written in Python3.
 
 This is a RAT controlled over Discord with over 20 post exploitation modules.
