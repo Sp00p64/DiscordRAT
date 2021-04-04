@@ -6,5 +6,6 @@ pynput
 pycaw
 win32gui
 win32con
+win32com
 win32net
 zipfile
