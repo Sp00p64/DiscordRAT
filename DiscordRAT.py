@@ -88,14 +88,14 @@ async def on_ready():
     channel_name = None
     for x in client.get_all_channels(): # From here we look through all the channels,check for the biggest number and then add one to it
         total.append(x.name)
-        for y in range(len(total)): #Probably a better way to do this
-            if "session" in total[y]:
-                import re
-                result = [e for e in re.split("[^0-9]", total[y]) if e != '']
-                biggest = max(map(int, result))
-                number = biggest + 1
-            else:
-                pass        
+    for y in range(len(total)): #Probably a better way to do this
+        if "session" in total[y]:
+            import re
+            result = [e for e in re.split("[^0-9]", total[y]) if e != '']
+            biggest = max(map(int, result))
+            number = biggest + 1
+        else:
+            pass  
     if number == 0:
         channel_name = "session-1"
         newchannel = await client.guilds[0].create_text_channel(channel_name)
