@@ -69,10 +69,11 @@ Availaible commands are :
 --> !unblockinput = Unblocks user's keyboard and mouse / Warning : Admin rights are required
 --> !screenshot = Get the screenshot of the user's current screen
 --> !exit = Exit program
+--> !kill = Kill a session or all sessions except current one / Syntax = "!kill session-3" or "!kill all"
 ```
 ## **Advice:**
 If you have problems with the installation of win32api or other modules , try installing it in a python virtual environment.\
-Please avoid opening issues about module related errors as it is related to your python install and not a problem inherent of DiscordRAT.\
+Please avoid opening issues about module related errors as it is caused by your python installation and not a problem inherent of DiscordRAT.\
 If you encounter "AttributeError: module 'enum' has no attribute 'IntFlag'" while compiling to Pyinstaller please do :
 ```
 pip uninstall enum34
