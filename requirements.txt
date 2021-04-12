@@ -4,7 +4,7 @@ browserhistory
 pyautogui
 pynput
 pycaw
-win32gui
+pywin32
 win32con
 win32com
 win32net
