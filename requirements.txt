@@ -5,7 +5,4 @@ pyautogui
 pynput
 pycaw
 pywin32
-win32con
-win32com
-win32net
 zipfile
