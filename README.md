@@ -17,7 +17,7 @@ Install requirements :
 ```
 pip3 install -r requirements.txt
 ```
-Then if steps above were succesful after launching the python file, or executable , it will create a new channel and post a message on the server with a generated session number.\
+Then if steps above were succesful after launching the python file by doing ```python DiscordRAT``` , or launching the executable , it will create a new channel and post a message on the server with a generated session number.\
 Now your bot should be available to use ! 
 
 **Requirements:**\
