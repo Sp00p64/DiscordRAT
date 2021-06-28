@@ -1,4 +1,5 @@
 discord
+asyncio
 mss
 browserhistory
 pyautogui
