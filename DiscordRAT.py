@@ -12,7 +12,6 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from discord.ext import commands
 from ctypes import *
 import asyncio
-import discord
 from discord import utils
 token = '' #Enter your token here
 global appdata
