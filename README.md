@@ -76,3 +76,17 @@ If you encounter "AttributeError: module 'enum' has no attribute 'IntFlag'" whil
 ```
 pip uninstall enum34
 ```
+
+If error:
+```
+ImportError: OpenCV loader: missing configuration file: ['config.py']. Check OpenCV installation.
+```
+specify the path to OpenCV, for example:
+```
+pyinstaller DiscordRAT.py --onefile --paths="C:\Users\user\AppData\Local\Programs\Python\Python38\lib\site-packages\cv2"
+```
+Which can be found by running:
+```python
+import cv2
+print(cv2.__file__)
+```
